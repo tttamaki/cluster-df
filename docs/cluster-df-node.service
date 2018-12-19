@@ -1,0 +1,16 @@
+[Unit]
+Description=Cluster-df-Node
+
+After=network.target local-fs.target multi-user.target
+Requires=network.target local-fs.target multi-user.target
+
+
+[Service]
+Type=simple
+StandardOutput=journal+console
+ExecStart=/usr/local/bin/cluster-df-node
+
+[Install]
+WantedBy=multi-user.target
+
+## Add me by: sudo systemctl enable cluster-top-node.service
