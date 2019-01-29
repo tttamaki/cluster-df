@@ -5,6 +5,7 @@ package dev
 
 import (
 	"strconv"
+	"os"
 	"os/exec"
 	"bytes"
 	"strings"
@@ -16,6 +17,9 @@ type Device struct {
      UsedKb     int64
      AvailKb    int64
      MountPoint string
+     UpdatePkgs int64
+     SecurityUpdates int64
+     NeedsReboot string
 }
 
 func UpdateDeviceList(devs map[string]*Device) {
@@ -27,10 +31,23 @@ func UpdateDeviceList(devs map[string]*Device) {
 	if err != nil {
 		panic(err)
 	}
-	
 	str := out.String()
 	str2 := strings.Split(str, "\n")
 
+
+	out_apt, err_apt := exec.Command("/usr/lib/update-notifier/apt-check").CombinedOutput()
+        if err_apt != nil {
+                panic(err_apt)
+        }
+        str_apt := string(out_apt) // format of "16;10" in stderr (not stdout)
+        str2_apt := strings.Split(str_apt, ";")
+	update_pkgs, _ := strconv.ParseInt(str2_apt[0], 10, 64)
+	security_updates, _ := strconv.ParseInt(str2_apt[1], 10, 64)
+	needs_reboot := "YES"
+	if _, err := os.Stat("/var/run/reboot-required"); os.IsNotExist(err) {
+		needs_reboot = "..."
+	}
+	
 	for line_index, line_str := range str2 {
 
 		if line_index == 0 { // skip the first line
@@ -51,7 +68,7 @@ func UpdateDeviceList(devs map[string]*Device) {
 		availk, _  := strconv.ParseInt(fields[3], 10, 64)
 		// usedp   := fields[4]
 		mount_str  := fields[5]
-		
+
 		p := devs[fs_str]
 		
 		if p == nil {
@@ -62,6 +79,9 @@ func UpdateDeviceList(devs map[string]*Device) {
 				UsedKb: usedk,
 				AvailKb: availk,
 				MountPoint: mount_str,
+				UpdatePkgs: update_pkgs,
+				SecurityUpdates: security_updates,
+				NeedsReboot: needs_reboot,
 			}
 		} else {
 			// just update

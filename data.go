@@ -28,6 +28,9 @@ type Device struct {
      UsedKb     int64
      AvailKb    int64
      MountPoint string
+     UpdatePkgs int64
+     SecurityUpdates int64
+     NeedsReboot string
 }
 
 
@@ -82,7 +85,7 @@ func (c *Cluster) Print(show_time bool) {
 
 	table := termtables.CreateTable()
 
-	tableHeader := []interface{}{"Node", "Filesystem", "Total", "Used", "Avail", "Use%", "mount"}
+	tableHeader := []interface{}{"Node", "Filesystem", "Total", "Used", "Avail", "Use%", "mount", "pkg updates", "security", "reboot?"}
 	if show_time {
 		tableHeader = append(tableHeader, "Last Seen")
 	}
@@ -102,6 +105,9 @@ func (c *Cluster) Print(show_time bool) {
 				"",
 				"",
 				"",
+				"n/a",
+				"n/a",
+				"n/a",
 			}
 
 			if show_time {
@@ -131,13 +137,22 @@ func (c *Cluster) Print(show_time bool) {
 					p.MountPoint,
 				}
 
+				if p_id == 0 {
+					tableRow = append(tableRow,
+						p.UpdatePkgs,
+						p.SecurityUpdates,
+						p.NeedsReboot,
+					)
+				} else {
+					tableRow = append(tableRow, "", "", "")
+				}
+						
 				if show_time {
 					if p_id == 0 {
 						tableRow = append(tableRow, node_lastseen)
 
 					} else {
 						tableRow = append(tableRow, "")
-
 					}
 				}
 
@@ -170,6 +185,9 @@ func GetDevices(devs map[string]*dev.Device, max int) []Device {
 				v.UsedKb,
 				v.AvailKb,
 				v.MountPoint,
+				v.UpdatePkgs,
+				v.SecurityUpdates,
+				v.NeedsReboot,
 			}
 			m_display = append(m_display, copy_dev)
 		}
