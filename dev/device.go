@@ -44,6 +44,8 @@ func UpdateDeviceList(devs map[string]*Device) {
 		}
 		
 		fs_str := fields[0]
+		fs_str = strings.TrimLeft(fs_str, "/dev/") // /dev/sda --> sda
+		fs_str = strings.TrimLeft(fs_str, "mapper/") // remove /dev/mapper/lvm --> lvm
 		totalk, _ := strconv.ParseInt(fields[1], 10, 64) // base10, int64
 		usedk, _   := strconv.ParseInt(fields[2], 10, 64)
 		availk, _  := strconv.ParseInt(fields[3], 10, 64)
