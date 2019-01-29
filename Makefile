@@ -17,7 +17,7 @@ install:
 	systemctl start cluster-df-node.service
 uninstall:
 	systemctl disable cluster-df-node.service
-	systemctl sdf cluster-df-node.service
+	systemctl stop cluster-df-node.service
 	rm -f $(SYSTEMD_DIR)/cluster-df-node.service 
 	rm -f $(BIN_DIR)/cluster-df-local
 	rm -f $(BIN_DIR)/cluster-df-node
@@ -32,5 +32,5 @@ install-router:
 
 uninstall-router:
 	systemctl disable cluster-df-router.service
-	systemctl sdf cluster-df-router.service
+	systemctl stop cluster-df-router.service
 	rm -f $(SYSTEMD_DIR)/cluster-df-router.service 

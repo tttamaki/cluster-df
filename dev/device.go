@@ -88,6 +88,9 @@ func UpdateDeviceList(devs map[string]*Device) {
 			p.TotalKb = totalk
 			p.UsedKb = usedk
 			p.AvailKb = availk
+			p.UpdatePkgs = update_pkgs
+			p.SecurityUpdates = security_updates
+			p.NeedsReboot = needs_reboot
 		}
 		
 		devs[fs_str] = p
