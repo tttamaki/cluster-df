@@ -23,7 +23,7 @@ func LoadConfig() Config {
 	c := Config{}
 
 	c.RouterIp = "10.30.81.234"
-	c.Tick = 600
+	c.Tick = 60
 	c.MaxDisplay = 5
 	c.Timeout = 180
 	c.Ports.Nodes = "9084"
